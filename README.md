@@ -2,28 +2,56 @@
 
 Toolkit privado para edição de imagens e preparação de encartes no Canva.
 
-## Objetivos
+> Estado atual: fundação técnica pronta para desenvolvimento local. O app Canva, Real-ESRGAN, OCR, remoção de fundo e processamento em lote ainda precisam ser implementados/integrados.
 
-- Upscale 2x/4x.
-- Remoção de fundo e objetos.
-- Warp, perspectiva e liquify.
-- Caneta, pincel, formas e borracha.
-- Filtros e ajustes.
-- OCR para nome e preço.
-- Processamento em lote.
+## Quick start
 
-## Estrutura
+```powershell
+git clone https://github.com/Lucasthai1/canva-image-toolkit.git
+cd canva-image-toolkit
+Copy-Item .env.example .env
+docker compose up --build
+```
 
-- `apps/canva`: app React/TypeScript para o Canva.
-- `services/api`: API FastAPI para processamento.
-- `services/worker`: tarefas de IA e imagem.
-- `packages/shared-types`: contratos compartilhados.
+Abra `http://localhost:8000/docs` e teste `GET /health`.
 
-## Desenvolvimento
+Sem Docker:
 
-1. Copie `.env.example` para `.env`.
-2. Execute `docker compose up --build` para subir a API.
-3. Instale o app Canva com o Apps SDK Starter Kit.
-4. Configure `VITE_API_URL`.
+```powershell
+cd services/api
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
 
-Este projeto é privado e ainda está em fase de fundação. Nunca comite chaves de API.
+Testes:
+
+```powershell
+cd services/api
+python -m pytest -q
+```
+
+## Documentação operacional
+
+- [Passo a passo](docs/GETTING_STARTED.md)
+- [Instruções para agentes](AGENTS.md)
+- [Arquitetura](docs/ARCHITECTURE.md)
+- [APIs e providers](docs/API_PROVIDERS.md)
+- [Variáveis de ambiente](docs/ENVIRONMENT.md)
+- [Integração Canva](docs/CANVA_INTEGRATION.md)
+- [Deploy](docs/DEPLOYMENT.md)
+- [Segurança](docs/SECURITY.md)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
+- [Contratos da API](docs/API_CONTRACTS.md)
+- [Checklist](docs/VALIDATION_CHECKLIST.md)
+- [Roadmap](docs/ROADMAP.md)
+
+## Princípios
+
+- Nenhum segredo no Git.
+- Processamento caro somente em worker/backend.
+- Uploads com limite de tamanho, pixels e MIME.
+- Arquivos temporários devem expirar.
+- Cada recurso deve possuir teste e tratamento de erro.
+- Não declarar um recurso como pronto se ele ainda retorna 501.

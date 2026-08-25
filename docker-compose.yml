@@ -2,15 +2,29 @@ services:
   api:
     build: ./services/api
     ports:
-      - "8000:8000"
-    env_file: .env
+      - "${API_PORT:-8000}:8000"
+    env_file:
+      - .env
+    environment:
+      STORAGE_DIR: /tmp/canva-image-toolkit
     volumes:
       - toolkit-data:/tmp/canva-image-toolkit
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 volumes:
   toolkit-data:
