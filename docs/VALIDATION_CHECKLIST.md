@@ -1,46 +1,49 @@
-# Checklist de validação
+# Checklist de validação rígida
 
-## Instalação
+## Repositório
 
-- [ ] Clone em máquina limpa.
-- [ ] `.env` criado a partir de `.env.example`.
-- [ ] Docker sobe sem erro.
-- [ ] API responde `/health`.
-- [ ] Swagger abre.
+- [ ] Nenhum `.env`, token, JSON de credencial ou modelo grande.
+- [ ] README descreve o estado real.
+- [ ] AGENTS.md está atualizado.
+- [ ] Branch/PR não apaga trabalho colaborativo.
 
-## Imagens
+## Python Lab
 
-- [ ] PNG, JPEG e WebP válidos.
-- [ ] Arquivo inválido rejeitado.
-- [ ] MIME incorreto rejeitado.
-- [ ] Upload grande rejeitado.
-- [ ] Imagem com muitos pixels rejeitada.
-- [ ] EXIF de rotação corrigido.
-- [ ] Transparência preservada.
-- [ ] Resultado excedente rejeitado.
+- [ ] Instala em Python 3.11+.
+- [ ] Testes passam em máquina limpa.
+- [ ] Arquivo inexistente gera erro compreensível.
+- [ ] Arquivo inválido é rejeitado.
+- [ ] Extensão de saída é validada.
+- [ ] JPEG converte RGBA para RGB.
+- [ ] PNG preserva transparência.
+- [ ] Escala só aceita valores suportados.
+- [ ] Perspectiva valida quatro pontos e dimensões positivas.
+- [ ] Providers opcionais falham com instrução de instalação.
 
-## Segurança
+## API
 
-- [ ] Nenhum segredo no Git.
-- [ ] CORS restrito em produção.
-- [ ] Auth habilitada em produção.
-- [ ] TTL de arquivos definido.
-- [ ] Logs sem conteúdo de imagem.
-- [ ] Rate limit configurado.
+- [ ] `/health` responde 200.
+- [ ] Upload limita bytes e pixels.
+- [ ] MIME e conteúdo são conferidos.
+- [ ] EXIF é corrigido.
+- [ ] Erros retornam 4xx/5xx apropriado.
+- [ ] CORS não fica aberto em produção.
+- [ ] Segredos não aparecem no OpenAPI/logs.
 
-## Providers
+## Produção
 
-- [ ] Cada provider pode ser desabilitado.
-- [ ] Timeout e retry limitados.
-- [ ] Erro de provider é visível.
-- [ ] Credenciais ficam somente no backend.
-- [ ] Custos e limites documentados.
+- [ ] HTTPS.
+- [ ] Autenticação.
+- [ ] Rate limit.
+- [ ] Timeout e concorrência limitados.
+- [ ] Storage privado com TTL.
+- [ ] Backup e rollback documentados.
+- [ ] Providers externos documentados.
 
-## Produto
+## Canva
 
-- [ ] App Canva abre.
-- [ ] Seleção e preview funcionam.
-- [ ] Resultado volta ao design.
-- [ ] Cancelar/repetir funciona.
-- [ ] Lote não bloqueia a interface.
-- [ ] Presets de encarte funcionam.
+- [ ] App criado no portal.
+- [ ] Origem configurada.
+- [ ] Seleção e preview testados.
+- [ ] Resultado inserido no design.
+- [ ] Cancelamento/repetição testados.
