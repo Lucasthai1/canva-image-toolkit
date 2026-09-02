@@ -32,7 +32,7 @@
 
 ## Produção
 
-- [ ] HTTPS.
+- [x] HTTPS público responde 200 (`43.156.64.19.sslip.io/health`).
 - [x] Autenticação.
 - [x] Rate limit.
 - [x] Timeout e concorrência limitados.
