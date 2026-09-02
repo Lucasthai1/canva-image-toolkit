@@ -1,0 +1,71 @@
+.scrollContainer {
+  box-sizing: border-box;
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--ui-kit-space-200);
+}
+
+.section {
+  display: grid;
+  gap: var(--ui-kit-space-150);
+}
+
+.previewFrame {
+  position: relative;
+  display: grid;
+  min-height: 190px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--ui-kit-radius-element-standard);
+  background:
+    linear-gradient(45deg, #ececf0 25%, transparent 25%),
+    linear-gradient(-45deg, #ececf0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ececf0 75%),
+    linear-gradient(-45deg, transparent 75%, #ececf0 75%);
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+  background-size: 16px 16px;
+}
+
+.previewImage {
+  width: 88%;
+  height: 220px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  transition:
+    filter 120ms ease,
+    transform 120ms ease;
+}
+
+.emptyState {
+  padding: var(--ui-kit-space-300) var(--ui-kit-space-200);
+  text-align: center;
+}
+
+.buttonGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ui-kit-space-100);
+}
+
+.status {
+  padding: var(--ui-kit-space-150);
+  border-radius: var(--ui-kit-radius-element-standard);
+  background: #f2f3f5;
+}
+
+.error {
+  padding: var(--ui-kit-space-150);
+  border-radius: var(--ui-kit-radius-element-standard);
+  background: #fff0f0;
+  color: #a32020;
+}
+
+.privacy {
+  color: #5b5f66;
+  font-size: 12px;
+}

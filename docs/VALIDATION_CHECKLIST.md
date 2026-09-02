@@ -2,10 +2,10 @@
 
 ## Repositório
 
-- [ ] Nenhum `.env`, token, JSON de credencial ou modelo grande.
-- [ ] README descreve o estado real.
+- [x] Nenhum `.env`, token, JSON de credencial ou modelo grande.
+- [x] README descreve o estado real.
 - [ ] AGENTS.md está atualizado.
-- [ ] Branch/PR não apaga trabalho colaborativo.
+- [x] Branch/PR não apaga trabalho colaborativo.
 
 ## Python Lab
 
@@ -42,8 +42,10 @@
 
 ## Canva
 
-- [ ] App criado no portal.
-- [ ] Origem configurada.
-- [ ] Seleção e preview testados.
-- [ ] Resultado inserido no design.
-- [ ] Cancelamento/repetição testados.
+- [x] App criado no portal.
+- [x] Origem local configurada pela Canva CLI.
+- [x] Manifesto sincronizado com o portal.
+- [x] Lint, tipos, testes e bundle de produção validados.
+- [x] Seleção e preview testados manualmente dentro do editor.
+- [x] Resultado aplicado e salvo em uma imagem descartável do design.
+- [ ] Cancelamento/repetição testados manualmente.

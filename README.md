@@ -14,7 +14,7 @@ Toolkit colaborativo para testar edição de imagens e, depois, integrar recurso
 | Remoção de fundo | Opcional no Python Lab; API ainda pendente |
 | OCR | Opcional no Python Lab; API ainda pendente |
 | Real-ESRGAN | Pendente |
-| App Canva | Pendente |
+| App Canva | MVP funcional em preview de desenvolvimento |
 | Warp/liquify avançado | Pendente |
 | Jobs, storage e lote | Pendente |
 
@@ -48,6 +48,21 @@ docker compose up --build
 ```
 
 Abra `http://localhost:8000/docs`.
+
+### App Canva
+
+```powershell
+cd apps\canva
+npm install
+npm run lint:check
+npm test
+npm run build
+npm start
+```
+
+O app seleciona uma imagem raster, mostra a prévia de ajustes locais e substitui
+somente aquela imagem pelo PNG processado. Consulte
+[`apps/canva/README.md`](apps/canva/README.md) para recursos, escopos e limites.
 
 ## Documentação
 
