@@ -24,6 +24,7 @@
     "@canva/app-ui-kit": "^5.14.2",
     "@canva/asset": "^2.3.0",
     "@canva/intents": "^2.7.0",
+    "fabric": "^7.4.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-intl": "^7.1.11"

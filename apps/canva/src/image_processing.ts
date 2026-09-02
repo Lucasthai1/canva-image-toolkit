@@ -2,6 +2,8 @@ export const MAX_INPUT_BYTES = 50 * 1024 * 1024;
 export const MAX_OUTPUT_PIXELS = 25_000_000;
 
 export type QuarterTurn = 0 | 90 | 180 | 270;
+export type WarpPreset = "none" | "left" | "right" | "top" | "bottom";
+type Point = { x: number; y: number };
 
 export type ImageAdjustments = {
   brightness: number;
@@ -12,6 +14,7 @@ export type ImageAdjustments = {
   flipHorizontal: boolean;
   flipVertical: boolean;
   scale: 1 | 2;
+  warp: WarpPreset;
 };
 
 export const DEFAULT_ADJUSTMENTS: ImageAdjustments = {
@@ -23,6 +26,7 @@ export const DEFAULT_ADJUSTMENTS: ImageAdjustments = {
   flipHorizontal: false,
   flipVertical: false,
   scale: 1,
+  warp: "none",
 };
 
 export const PRESETS = {
@@ -45,6 +49,34 @@ export const PRESETS = {
     contrast: 112,
     saturation: 120,
     sharpness: 18,
+  },
+  produce: {
+    ...DEFAULT_ADJUSTMENTS,
+    brightness: 105,
+    contrast: 108,
+    saturation: 122,
+    sharpness: 20,
+  },
+  meat: {
+    ...DEFAULT_ADJUSTMENTS,
+    brightness: 104,
+    contrast: 112,
+    saturation: 108,
+    sharpness: 26,
+  },
+  cleaning: {
+    ...DEFAULT_ADJUSTMENTS,
+    brightness: 110,
+    contrast: 110,
+    saturation: 116,
+    sharpness: 18,
+  },
+  frozen: {
+    ...DEFAULT_ADJUSTMENTS,
+    brightness: 108,
+    contrast: 106,
+    saturation: 108,
+    sharpness: 16,
   },
 } as const satisfies Record<string, ImageAdjustments>;
 
@@ -103,15 +135,16 @@ export function getPreviewStyle(adjustments: ImageAdjustments): {
 export async function renderImageToPng(
   sourceUrl: string,
   adjustments: ImageAdjustments,
+  overlayUrl: string | null = null,
 ): Promise<string> {
   const blob = await downloadImage(sourceUrl);
   const image = await decodeImage(blob);
   const output = getOutputSize(image.width, image.height, adjustments);
-  const canvas = document.createElement("canvas");
+  let canvas = document.createElement("canvas");
   canvas.width = output.width;
   canvas.height = output.height;
 
-  const context = canvas.getContext("2d", { willReadFrequently: true });
+  let context = canvas.getContext("2d", { willReadFrequently: true });
   if (!context) {
     throw new Error("CANVAS_UNAVAILABLE");
   }
@@ -139,12 +172,158 @@ export async function renderImageToPng(
   context.setTransform(1, 0, 0, 1, 0, 0);
   context.filter = "none";
 
+  if (adjustments.warp !== "none") {
+    canvas = warpWithMesh(canvas, adjustments.warp);
+    context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) {
+      throw new Error("CANVAS_UNAVAILABLE");
+    }
+  }
+
+  if (overlayUrl) {
+    const overlay = await decodeImage(await (await fetch(overlayUrl)).blob());
+    context.drawImage(overlay, 0, 0, canvas.width, canvas.height);
+  }
+
   if (adjustments.sharpness > 0) {
     applySharpen(context, output.width, output.height, adjustments.sharpness);
   }
 
   const png = await canvasToBlob(canvas);
   return blobToDataUrl(png);
+}
+
+export function getWarpCorners(
+  width: number,
+  height: number,
+  preset: WarpPreset,
+): [Point, Point, Point, Point] {
+  const insetX = width * 0.12;
+  const insetY = height * 0.12;
+  switch (preset) {
+    case "left":
+      return [
+        { x: insetX, y: insetY },
+        { x: width, y: 0 },
+        { x: width, y: height },
+        { x: insetX, y: height - insetY },
+      ];
+    case "right":
+      return [
+        { x: 0, y: 0 },
+        { x: width - insetX, y: insetY },
+        { x: width - insetX, y: height - insetY },
+        { x: 0, y: height },
+      ];
+    case "top":
+      return [
+        { x: insetX, y: insetY },
+        { x: width - insetX, y: insetY },
+        { x: width, y: height },
+        { x: 0, y: height },
+      ];
+    case "bottom":
+      return [
+        { x: 0, y: 0 },
+        { x: width, y: 0 },
+        { x: width - insetX, y: height - insetY },
+        { x: insetX, y: height - insetY },
+      ];
+    default:
+      return [
+        { x: 0, y: 0 },
+        { x: width, y: 0 },
+        { x: width, y: height },
+        { x: 0, y: height },
+      ];
+  }
+}
+
+function warpWithMesh(
+  source: HTMLCanvasElement,
+  preset: WarpPreset,
+): HTMLCanvasElement {
+  const output = document.createElement("canvas");
+  output.width = source.width;
+  output.height = source.height;
+  const context = output.getContext("2d");
+  if (!context) throw new Error("CANVAS_UNAVAILABLE");
+  const [topLeft, topRight, bottomRight, bottomLeft] = getWarpCorners(
+    source.width,
+    source.height,
+    preset,
+  );
+  const columns = 12;
+  const rows = 12;
+  const destination = (u: number, v: number) => ({
+    x:
+      (1 - u) * (1 - v) * topLeft.x +
+      u * (1 - v) * topRight.x +
+      u * v * bottomRight.x +
+      (1 - u) * v * bottomLeft.x,
+    y:
+      (1 - u) * (1 - v) * topLeft.y +
+      u * (1 - v) * topRight.y +
+      u * v * bottomRight.y +
+      (1 - u) * v * bottomLeft.y,
+  });
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const u0 = column / columns;
+      const u1 = (column + 1) / columns;
+      const v0 = row / rows;
+      const v1 = (row + 1) / rows;
+      const s00 = { x: u0 * source.width, y: v0 * source.height };
+      const s10 = { x: u1 * source.width, y: v0 * source.height };
+      const s11 = { x: u1 * source.width, y: v1 * source.height };
+      const s01 = { x: u0 * source.width, y: v1 * source.height };
+      const d00 = destination(u0, v0);
+      const d10 = destination(u1, v0);
+      const d11 = destination(u1, v1);
+      const d01 = destination(u0, v1);
+      drawTriangle(context, source, [s00, s10, s11], [d00, d10, d11]);
+      drawTriangle(context, source, [s00, s11, s01], [d00, d11, d01]);
+    }
+  }
+  return output;
+}
+
+function drawTriangle(
+  context: CanvasRenderingContext2D,
+  source: CanvasImageSource,
+  sourcePoints: [Point, Point, Point],
+  destinationPoints: [Point, Point, Point],
+): void {
+  const [s0, s1, s2] = sourcePoints;
+  const [d0, d1, d2] = destinationPoints;
+  const determinant =
+    s0.x * (s1.y - s2.y) + s1.x * (s2.y - s0.y) + s2.x * (s0.y - s1.y);
+  if (Math.abs(determinant) < 1e-8) return;
+  const coefficient = (v0: number, v1: number, v2: number) => ({
+    a:
+      (v0 * (s1.y - s2.y) + v1 * (s2.y - s0.y) + v2 * (s0.y - s1.y)) /
+      determinant,
+    c:
+      (v0 * (s2.x - s1.x) + v1 * (s0.x - s2.x) + v2 * (s1.x - s0.x)) /
+      determinant,
+    e:
+      (v0 * (s1.x * s2.y - s2.x * s1.y) +
+        v1 * (s2.x * s0.y - s0.x * s2.y) +
+        v2 * (s0.x * s1.y - s1.x * s0.y)) /
+      determinant,
+  });
+  const x = coefficient(d0.x, d1.x, d2.x);
+  const y = coefficient(d0.y, d1.y, d2.y);
+  context.save();
+  context.beginPath();
+  context.moveTo(d0.x, d0.y);
+  context.lineTo(d1.x, d1.y);
+  context.lineTo(d2.x, d2.y);
+  context.closePath();
+  context.clip();
+  context.setTransform(x.a, y.a, x.c, y.c, x.e, y.e);
+  context.drawImage(source, 0, 0);
+  context.restore();
 }
 
 async function downloadImage(url: string): Promise<Blob> {

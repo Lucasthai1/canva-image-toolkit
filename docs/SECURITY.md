@@ -10,11 +10,17 @@ Validar MIME declarado e conteúdo real, impor limite de bytes/pixels, corrigir 
 
 ## API
 
-Adicionar autenticação em produção, CORS restrito, rate limit, timeout, limites de concorrência e mensagens sem stack trace. Não retornar URLs públicas permanentes.
+Em produção, o processo recusa iniciar sem Bearer token de pelo menos 24
+caracteres e CORS explícito. Rate limit por IP, timeout, concorrência, headers de
+segurança e mensagens sem stack trace estão ativos. Resultados de jobs exigem o
+mesmo token e expiram.
 
 ## Imagens
 
 Remover metadados quando apropriado. Não manter arquivos além do TTL. Isolar worker e impedir execução de arquivos enviados.
+
+O worker executa somente operações enumeradas. O adapter Real-ESRGAN usa uma
+lista fixa de argumentos e nunca passa conteúdo do usuário por um shell.
 
 ## Privacidade
 

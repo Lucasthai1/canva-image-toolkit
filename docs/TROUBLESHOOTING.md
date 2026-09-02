@@ -23,9 +23,16 @@ Inclua exatamente a origem do app em `CORS_ORIGINS`, sem barra final indevida.
 
 O fallback Lanczos é CPU. Real-ESRGAN deve rodar em worker e pode exigir GPU. Reduza tamanho, use fila e imponha limite.
 
-## OCR/remoção de fundo 501
+## OCR/remoção de fundo 503
 
-Isso é esperado até o provider correspondente ser implementado e configurado. Não trate 501 como sucesso.
+Isso indica que o adapter existe, mas a credencial do provider não foi injetada.
+Consulte `GET /v1/providers`; não trate o estado desativado como sucesso.
+
+## Job permanece na fila
+
+Verifique `docker compose ps worker redis` e os logs do worker. O Redis não é
+exposto publicamente e os arquivos de entrada/saída expiram conforme
+`STORAGE_TTL_SECONDS`.
 
 ## Testes falham
 

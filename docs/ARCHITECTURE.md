@@ -14,6 +14,10 @@ Recebe uploads pequenos e operações rápidas. Deve validar autenticação, MIM
 
 Executa Real-ESRGAN, remoção de fundo, inpainting, OCR e lotes. Não deve bloquear requests HTTP longos.
 
+O worker `services/api/worker.py` consome a lista Redis, grava estados em hashes
+com expiração e salva resultados no storage privado. Falhas persistem somente
+mensagens sanitizadas.
+
 ### Redis
 
 Fila e estado de jobs assíncronos. Não é armazenamento permanente de imagens.
@@ -21,6 +25,11 @@ Fila e estado de jobs assíncronos. Não é armazenamento permanente de imagens.
 ### Storage
 
 Armazenamento temporário S3/R2/local. Cada objeto deve ter TTL, nome aleatório e acesso privado.
+
+O backend atual implementa `LocalStorage` compartilhado por volume Docker. As
+chaves são UUIDs, os arquivos usam permissão restrita e o worker remove itens
+expirados. S3/R2 continua sendo uma evolução opcional, não requisito do deploy
+de uma única VPS.
 
 ## Fluxo recomendado
 
@@ -39,3 +48,5 @@ Armazenamento temporário S3/R2/local. Cada objeto deve ter TTL, nome aleatório
 - Providers atrás de adaptadores: `UpscalerProvider`, `BackgroundRemovalProvider`, `OcrProvider`.
 - REST versionada em `/v1`.
 - Falhas de provider devem ser explícitas e observáveis.
+- A API síncrona é limitada por semáforo/timeout; operações longas devem usar jobs.
+- `/health` é liveness público; `/ready` também verifica o Redis.

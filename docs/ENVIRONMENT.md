@@ -12,13 +12,16 @@ O arquivo `.env.example` é um mapa de configuração; ele não contém credenci
 - `MAX_PIXELS`: limite de pixels de entrada.
 - `MAX_OUTPUT_PIXELS`: limite de pixels de saída.
 - `REQUEST_TIMEOUT_SECONDS`: timeout de operações.
+- `MAX_CONCURRENT_REQUESTS`: requests processados simultaneamente.
+- `RATE_LIMIT_REQUESTS` e `RATE_LIMIT_WINDOW_SECONDS`: janela do rate limit por IP.
 - `LOG_LEVEL`: nível de log.
 
 ## Providers
 
 - `UPSCALER_PROVIDER`: `lanczos`, `realesrgan` ou `api`.
 - `REALESRGAN_MODEL_PATH`: caminho local do modelo.
-- `REALESRGAN_DEVICE`: `cpu` ou `cuda`.
+- `REALESRGAN_BINARY`: caminho do executável `realesrgan-ncnn-vulkan`.
+- `REALESRGAN_MODEL` e `REALESRGAN_TILE`: modelo e tile do worker.
 - `HUGGINGFACE_API_TOKEN`: token somente no backend.
 - `HF_BACKGROUND_MODEL`: modelo de remoção de fundo.
 - `GOOGLE_APPLICATION_CREDENTIALS`: caminho local não versionado para credencial Google.
@@ -33,6 +36,8 @@ O arquivo `.env.example` é um mapa de configuração; ele não contém credenci
 - `STORAGE_BUCKET`, `STORAGE_ENDPOINT`, `STORAGE_REGION`.
 - `STORAGE_ACCESS_KEY`, `STORAGE_SECRET_KEY`.
 - `STORAGE_TTL_SECONDS`: expiração de arquivos.
+- `MAX_BATCH_FILES`: quantidade máxima por envio em lote.
+- `TOOLKIT_DOMAIN`: domínio HTTPS usado pelo Caddy.
 
 ## Canva
 

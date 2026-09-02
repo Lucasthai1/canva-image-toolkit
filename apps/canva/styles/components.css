@@ -69,3 +69,15 @@
   color: #5b5f66;
   font-size: 12px;
 }
+
+.overlayCanvas {
+  width: 280px;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid #d6d8dc;
+  border-radius: var(--ui-kit-radius-element-standard);
+  background-color: #f1f2f4;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}

@@ -12,6 +12,9 @@ enviar o arquivo a um serviço externo.
 - substituição da imagem pelo resultado em PNG usando as APIs oficiais de
   seleção e assets do Canva;
 - presets rápidos para fotos de produtos de encarte;
+- presets por categoria: hortifruti, carnes, limpeza e congelados;
+- desenho livre, retângulo, círculo, texto, borracha de objetos e undo/redo com Fabric.js;
+- perspectivas locais por malha com quatro cantos;
 - mensagens de estado e erros recuperáveis em português.
 
 ## Requisitos
@@ -46,3 +49,4 @@ design não são alterados.
 - a saída é recusada acima de 25 megapixels para evitar travar o editor;
 - recortes e efeitos já aplicados pelo Canva podem influenciar a imagem-fonte
   retornada pela Selection API.
+- o editor pesado da API exige autenticação própria e não recebe tokens pelo frontend.

@@ -40,4 +40,6 @@ Uma tarefa só está pronta quando funciona em instalação limpa, possui tratam
 
 ## Próxima prioridade
 
-Consolidar o `python-lab` como protótipo validável, depois criar o cliente do app Canva. Só então integrar providers pesados e jobs.
+Preservar o deploy Tencent de baixo consumo, manter providers pagos/GPU
+desativados por padrão e ampliar somente com evidência de capacidade, custo e
+testes de rollback.

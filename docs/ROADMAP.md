@@ -21,17 +21,23 @@
 - [x] Limites de bytes/pixels e cancelamento quando a seleção muda.
 - [x] Testes, lint, verificação de tipos e build de produção.
 
-## Próxima etapa
+## Backlog técnico concluído
 
-- [ ] Editor Fabric.js com caneta, borracha, formas e undo/redo.
-- [ ] Warp por quatro pontos e malha.
-- [ ] Real-ESRGAN opcional por worker GPU.
-- [ ] Remoção de fundo via Hugging Face.
-- [ ] OCR via Google Cloud Vision.
-- [ ] Fila Redis e jobs assíncronos.
-- [ ] Presets calibrados por categoria de produto e fundo.
-- [ ] Processamento em lote.
-- [ ] Autenticação app/API e rate limit.
+- [x] Editor Fabric.js com caneta, borracha de objetos, formas e undo/redo.
+- [x] Warp por quatro pontos na API e malha local no app.
+- [x] Real-ESRGAN opcional por worker/binário, desativável e com fallback Lanczos.
+- [x] Remoção de fundo via Hugging Face, desativada sem token.
+- [x] OCR via Google Cloud Vision, desativado sem credencial.
+- [x] Fila Redis e jobs assíncronos.
+- [x] Presets calibrados para hortifruti, carnes, limpeza e congelados.
+- [x] Processamento em lote com limite configurável.
+- [x] Autenticação Bearer, CORS fechado, rate limit, timeout e concorrência.
+
+## Evoluções opcionais
+
+- [ ] Autenticação de usuário final baseada no fluxo de backend do Canva.
+- [ ] Worker GPU dedicado quando houver hardware e orçamento aprovados.
+- [ ] Storage S3/R2 quando o volume local deixar de ser suficiente.
 
 ## Critério de pronto
 

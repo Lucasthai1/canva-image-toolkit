@@ -10,17 +10,19 @@ import {
   Title,
 } from "@canva/app-ui-kit";
 import { getTemporaryUrl, upload } from "@canva/asset";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useIntl } from "react-intl";
 import {
   DEFAULT_ADJUSTMENTS,
   PRESETS,
   type ImageAdjustments,
   type PresetName,
+  type WarpPreset,
   getPreviewStyle,
   normalizeRotation,
   renderImageToPng,
 } from "src/image_processing";
+import { OverlayEditor, type OverlayEditorHandle } from "src/overlay_editor";
 import * as styles from "styles/components.css";
 
 type LoadState = "idle" | "loading" | "ready";
@@ -38,6 +40,7 @@ export const App = () => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState(0);
+  const overlayRef = useRef<OverlayEditorHandle | null>(null);
 
   useEffect(() => {
     let disposed = false;
@@ -79,6 +82,10 @@ export const App = () => {
     };
   }, [intl, refreshToken, selection]);
 
+  useEffect(() => {
+    overlayRef.current?.reset();
+  }, [sourceUrl]);
+
   const previewStyle = useMemo(
     () => getPreviewStyle(adjustments),
     [adjustments],
@@ -101,6 +108,7 @@ export const App = () => {
 
   const reset = () => {
     applyPreset("neutral");
+    overlayRef.current?.reset();
   };
 
   const applyToSelection = async () => {
@@ -128,7 +136,11 @@ export const App = () => {
         type: "image",
         ref: originalRef,
       });
-      const dataUrl = await renderImageToPng(temporary.url, adjustments);
+      const dataUrl = await renderImageToPng(
+        temporary.url,
+        adjustments,
+        overlayRef.current?.exportPng() ?? null,
+      );
 
       const currentDraft = await selection.read();
       const currentImage = currentDraft.contents[0];
@@ -254,8 +266,90 @@ export const App = () => {
                     description: "Vivid image preset label.",
                   }),
                 },
+                {
+                  value: "produce",
+                  label: intl.formatMessage({
+                    defaultMessage: "Hortifruti",
+                    description: "Produce photo preset label.",
+                  }),
+                },
+                {
+                  value: "meat",
+                  label: intl.formatMessage({
+                    defaultMessage: "Carnes",
+                    description: "Meat photo preset label.",
+                  }),
+                },
+                {
+                  value: "cleaning",
+                  label: intl.formatMessage({
+                    defaultMessage: "Limpeza",
+                    description: "Cleaning product photo preset label.",
+                  }),
+                },
+                {
+                  value: "frozen",
+                  label: intl.formatMessage({
+                    defaultMessage: "Congelados",
+                    description: "Frozen product photo preset label.",
+                  }),
+                },
               ]}
               onChange={applyPreset}
+            />
+          )}
+        />
+
+        <FormField
+          label={intl.formatMessage({
+            defaultMessage: "Perspectiva por malha",
+            description: "Label for the local four-corner warp selector.",
+          })}
+          value={adjustments.warp}
+          control={(controlProps) => (
+            <Select<WarpPreset>
+              {...controlProps}
+              disabled={busy}
+              options={[
+                {
+                  value: "none",
+                  label: intl.formatMessage({
+                    defaultMessage: "Sem perspectiva",
+                    description: "No warp option.",
+                  }),
+                },
+                {
+                  value: "left",
+                  label: intl.formatMessage({
+                    defaultMessage: "Recuar lado esquerdo",
+                    description: "Left perspective warp option.",
+                  }),
+                },
+                {
+                  value: "right",
+                  label: intl.formatMessage({
+                    defaultMessage: "Recuar lado direito",
+                    description: "Right perspective warp option.",
+                  }),
+                },
+                {
+                  value: "top",
+                  label: intl.formatMessage({
+                    defaultMessage: "Recuar topo",
+                    description: "Top perspective warp option.",
+                  }),
+                },
+                {
+                  value: "bottom",
+                  label: intl.formatMessage({
+                    defaultMessage: "Recuar base",
+                    description: "Bottom perspective warp option.",
+                  }),
+                },
+              ]}
+              onChange={(warp) =>
+                setAdjustments((current) => ({ ...current, warp }))
+              }
             />
           )}
         />
@@ -386,6 +480,12 @@ export const App = () => {
               scale: checked ? 2 : 1,
             }))
           }
+        />
+
+        <OverlayEditor
+          ref={overlayRef}
+          disabled={busy || !hasOneImage}
+          backgroundUrl={sourceUrl}
         />
 
         {error ? (

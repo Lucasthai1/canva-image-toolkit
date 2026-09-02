@@ -5,13 +5,13 @@
 | Recurso | Provider recomendado | Obrigatório agora? | Observação |
 |---|---|---:|---|
 | Ajustes/flip/rotação | Pillow/OpenCV | Não | Já existe na API |
-| Caneta/formas | Fabric.js | Não | Deve rodar no app Canva |
-| Warp/perspectiva | Fabric.js/OpenCV | Não | Implementar com preview e export |
-| Upscale | Real-ESRGAN local/GPU | Não | Atual é fallback Lanczos |
-| Remoção de fundo | Hugging Face/rembg | Não | Requer token ou modelo local |
-| OCR | Google Cloud Vision/PaddleOCR | Não | Requer credencial ou modelo local |
-| Jobs | Redis + worker | Não | Necessário para operações demoradas |
-| Storage | S3/R2/MinIO/local | Não | Necessário para lotes e arquivos grandes |
+| Caneta/formas | Fabric.js | Sim | Implementado no app Canva |
+| Warp/perspectiva | Fabric.js/OpenCV | Sim | Malha local e endpoint de quatro pontos |
+| Upscale | Real-ESRGAN local/GPU | Não | Adapter implementado; fallback Lanczos |
+| Remoção de fundo | Hugging Face | Não | Adapter implementado; exige token |
+| OCR | Google Cloud Vision | Não | Adapter implementado; exige credencial |
+| Jobs | Redis + worker | Sim | Implementado no Compose |
+| Storage | Local privado | Sim | Volume com UUID e TTL; S3/R2 opcional |
 
 ## Hugging Face
 
@@ -25,8 +25,10 @@ Não comite JSON de service account. Em produção prefira identidade gerenciada
 
 ## Real-ESRGAN
 
-Variáveis: `UPSCALER_PROVIDER=local`, `REALESRGAN_MODEL_PATH`, `REALESRGAN_TILE`, `REALESRGAN_DEVICE`.
-Comece com fallback Lanczos para validar o fluxo. Só habilite GPU quando houver memória e testes de custo/tempo.
+Variáveis: `UPSCALER_PROVIDER=realesrgan`, `REALESRGAN_BINARY`,
+`REALESRGAN_MODEL` e `REALESRGAN_TILE`. O adapter executa o binário oficial sem
+shell, com timeout e diretório aleatório. Só habilite GPU quando houver memória
+e testes de custo/tempo; a Lighthouse de 2 GB usa Lanczos por padrão.
 
 ## Canva Apps SDK
 
@@ -34,4 +36,5 @@ Comece com fallback Lanczos para validar o fluxo. Só habilite GPU quando houver
 
 ## Regra de provider
 
-Cada provider deve possuir: interface, implementação, timeout, retry limitado, mensagem de erro, teste unitário, teste de indisponibilidade e configuração para desabilitar.
+Cada provider possui status sem segredo, implementação isolada, timeout,
+retry limitado quando remoto, erro explícito e configuração para desabilitar.

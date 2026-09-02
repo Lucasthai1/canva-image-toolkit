@@ -5,7 +5,10 @@ Copie o texto abaixo para um agente de código:
 ```text
 Você está trabalhando no repositório Lucasthai1/canva-image-toolkit.
 
-Leia primeiro AGENTS.md, README.md e docs/GETTING_STARTED.md. O objetivo é criar um toolkit de edição de imagens para preparar encartes e futuramente integrar ao Canva. O Python Lab é o protótipo inicial; a API FastAPI é a segunda camada; o app Canva ainda não está implementado.
+Leia primeiro AGENTS.md, README.md e docs/GETTING_STARTED.md. O objetivo é
+manter o toolkit de edição de imagens para encartes. Python Lab, API FastAPI,
+worker Redis e app Canva já estão implementados; valide o estado real antes de
+ampliar qualquer provider.
 
 Antes de codificar:
 1. Faça inventário dos arquivos.
@@ -30,5 +33,6 @@ Ao implementar qualquer recurso:
 - Execute testes, compilação e verificação de segredos.
 - Informe claramente o que continua pendente.
 
-Não declare Canva, OCR, Real-ESRGAN, remoção de fundo ou jobs como prontos sem integração e teste real.
+Não declare um provider opcional como habilitado sem credencial/hardware e
+teste real; adapters implementados mas desativados devem aparecer como tal.
 ``` 

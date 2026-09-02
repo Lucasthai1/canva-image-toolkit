@@ -3,6 +3,7 @@ import {
   MAX_OUTPUT_PIXELS,
   getOutputSize,
   getPreviewStyle,
+  getWarpCorners,
   normalizeRotation,
 } from "./image_processing";
 
@@ -43,5 +44,14 @@ describe("image processing safeguards", () => {
       filter: "brightness(110%) contrast(100%) saturate(100%)",
       transform: "rotate(270deg) scaleX(-1) scaleY(1)",
     });
+  });
+
+  it("builds bounded four-corner mesh presets", () => {
+    expect(getWarpCorners(100, 50, "top")).toEqual([
+      { x: 12, y: 6 },
+      { x: 88, y: 6 },
+      { x: 100, y: 50 },
+      { x: 0, y: 50 },
+    ]);
   });
 });

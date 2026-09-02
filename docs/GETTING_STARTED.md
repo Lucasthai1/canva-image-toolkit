@@ -57,6 +57,17 @@ Invoke-RestMethod http://localhost:8000/health
 
 Documentação interativa: `http://localhost:8000/docs`.
 
+O Compose também inicia Redis e worker. Para testar um job:
+
+```powershell
+$headers = @{ Authorization = "Bearer $env:API_AUTH_TOKEN" }
+Invoke-RestMethod -Method Post -Uri http://localhost:8000/v1/jobs `
+  -Headers $headers -Form @{ operation = "upscale"; params = '{"scale":2}'; file = Get-Item .\foto.png }
+```
+
+Em desenvolvimento o token pode ficar vazio. Em produção ele é obrigatório e
+jamais deve ser colocado no app Canva ou em arquivos versionados.
+
 ## Linux/macOS
 
 Use `cp .env.example .env`, `source .venv/bin/activate` e os mesmos comandos Docker.
